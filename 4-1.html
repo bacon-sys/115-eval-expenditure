@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>指標 4-1｜經費執行情形</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#faf6f2;--card:#fff;--ink:#2b2320;--ink-soft:#6b5c54;--line:#e2d6cb;--red:#a8322a;--earth:#8a6a4f}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+.wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px 20px 12px;gap:10px;max-width:1240px;width:100%;margin:0 auto}
+.head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;flex:0 0 auto}
+.head .t{flex:1;min-width:240px}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;color:var(--earth);font-weight:500;margin:0 0 1px}
+h1{font-family:"Noto Serif TC",serif;font-size:1.32rem;font-weight:700;margin:0;line-height:1.3}
+.sub{margin:2px 0 0;font-size:.9rem;color:var(--ink-soft)}
+.toggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card);flex:0 0 auto}
+.toggle button{font:inherit;font-size:.88rem;font-weight:500;border:0;background:none;color:var(--ink-soft);padding:7px 17px;cursor:pointer;transition:.15s;white-space:nowrap}
+.toggle button.active{background:var(--earth);color:#fff}
+.toggle button:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+.chart{flex:1;min-height:0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px 4px}
+.chart svg{display:block;width:100%;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 15px;font-size:.83rem;color:var(--ink-soft);flex:0 0 auto;padding-left:2px;min-height:20px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:13px;height:13px;border-radius:3px;display:block}
+.foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:0 0 auto}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;flex:1}
+.kpi div{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--earth);border-radius:8px;padding:6px 13px}
+.kpi b{display:block;font-size:1.12rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25}
+.kpi span{font-size:.79rem;color:var(--ink-soft)}
+a.full{flex:0 0 auto;font-size:.87rem;font-weight:500;text-decoration:none;color:#fff;background:var(--red);padding:9px 18px;border-radius:8px;white-space:nowrap}
+a.full:hover{background:#8d2822}
+a.full:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media (max-width:640px){body{font-size:14px}h1{font-size:1.15rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="t">
+      <p class="eyebrow">指標 4-1　經費運用情形</p>
+      <h1>實驗教育經費執行情形（112–114 學年度）</h1>
+      <p class="sub" id="sub">兩項補助計畫三學年度執行率均達 97% 以上，縣府委辦計畫連續三年全數執行完畢。</p>
+    </div>
+    <div class="toggle" role="group" aria-label="切換檢視">
+      <button id="btnRate" class="active" type="button">執行率</button>
+      <button id="btnStruct" type="button">支出結構</button>
+    </div>
+  </div>
+  <div class="chart"><svg id="svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="經費執行情形圖表"></svg></div>
+  <div class="legend" id="legend"></div>
+  <div class="foot">
+    <div class="kpi" id="kpi"></div>
+    <a class="full" href="https://bacon-sys.github.io/115-eval-expenditure/" target="_blank" rel="noopener">開啟完整版分析 ↗</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  var svg=document.getElementById('svg'), W=1000, H=430;
+  var RED='#a63a2e', GREEN='#3e5c46';
+  var YEARS=['112','113','114'];
+
+  var PLANS=[
+    {name:'原民會｜學校型態原住民族實驗教育計畫', color:RED,
+     rows:[{y:'112',g:1500000,s:1462194,r:97.48},{y:'113',g:1500000,s:1486473,r:99.10},{y:'114',g:1300000,s:1289919,r:99.22}]},
+    {name:'縣府委辦｜推動實驗教育計畫', color:GREEN,
+     rows:[{y:'112',g:300000,s:300000,r:100},{y:'113',g:300000,s:300000,r:100},{y:'114',g:300000,s:300000,r:100}]}
+  ];
+
+  var CATS=['人事費（約僱薪資・保費）','行政與出席費','授課與講座鐘點','教材教具與材料','交通差旅與膳費','印刷與雜支','資本門設備'];
+  var CCOL=['#7d3b32','#a63a2e','#c96a5c','#c98a2d','#3e5c46','#7a9a82','#5a5148'];
+  var STRUCT={'112':[597568,75470,298050,300000,129800,24506,36800],
+              '113':[615801,92565,336400,250000,112680,19027,60000],
+              '114':[621228,78320,266520,200000,78000,15852,29999]};
+
+  function el(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e;}
+  function tx(x,y,s,o){var t=el('text',{x:x,y:y});for(var k in (o||{}))t.setAttribute(k,o[k]);t.textContent=s;return t;}
+  function nf(v){return v.toLocaleString('en-US');}
+  function clear(){while(svg.firstChild)svg.removeChild(svg.firstChild);}
+  function fit(){
+    var b=svg.parentNode.getBoundingClientRect();
+    if(b.width>4&&b.height>4) H=Math.max(230,Math.min(700,Math.round(W*b.height/b.width)));
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  }
+
+  function drawRate(){
+    fit(); clear();
+    var top=14, bot=8, avail=H-top-bot;
+    var unit=avail/8.6;             /* 2 group headers + 6 rows + half-unit spacer */
+    var TX=170, TW=400, y=top;
+
+    PLANS.forEach(function(p,pi){
+      if(pi) y+=unit*0.5;
+      svg.appendChild(tx(4,y+unit*0.62,p.name,{'font-size':17,'font-weight':700,fill:p.color}));
+      y+=unit;
+      p.rows.forEach(function(r){
+        var cy=y+unit*0.5, bh=Math.min(26,unit*0.52);
+        svg.appendChild(tx(4,cy+6,r.y+' 學年度',{'font-size':16,fill:'#5c4f46','font-weight':500}));
+        svg.appendChild(el('rect',{x:TX,y:cy-bh/2,width:TW,height:bh,rx:4,fill:'#f0e7dd'}));
+        svg.appendChild(el('rect',{x:TX,y:cy-bh/2,width:TW*r.r/100,height:bh,rx:4,fill:p.color}));
+        svg.appendChild(tx(TX+TW+18,cy+6,r.r.toFixed(2)+'%',{'font-size':17,'font-weight':700,fill:p.color}));
+        svg.appendChild(tx(706,cy+6,'實支 '+nf(r.s)+' ／ 撥付 '+nf(r.g)+' 元',
+          {'font-size':14,fill:'#8b7a6e'}));
+        y+=unit;
+      });
+    });
+    setLegend([]);
+  }
+
+  function drawStruct(){
+    fit(); clear();
+    var top=18, bot=44, ML=124, MR=16;
+    var pw=W-ML-MR, ph=H-top-bot;
+    var max=1500000, band=ph/3;
+    var bh=Math.min(58,band*0.56);
+
+    for(var v=0; v<=max; v+=250000){
+      var x=ML+(v/max)*pw;
+      svg.appendChild(el('line',{x1:x,x2:x,y1:top,y2:top+ph,stroke:'#eee5d8','stroke-width':1}));
+      svg.appendChild(tx(x,H-bot+22,(v/10000)+' 萬',{'font-size':13,fill:'#a1907f','text-anchor':'middle'}));
+    }
+    YEARS.forEach(function(y,i){
+      var cy=top+band*i+band/2, acc=0, d=STRUCT[y];
+      var tot=d.reduce(function(a,b){return a+b;},0);
+      svg.appendChild(tx(ML-14,cy-1,y+' 學年度',{'font-size':16,'font-weight':700,fill:'#5c4f46','text-anchor':'end'}));
+      svg.appendChild(tx(ML-14,cy+17,nf(tot)+' 元',{'font-size':12,fill:'#a1907f','text-anchor':'end'}));
+      d.forEach(function(val,k){
+        var x0=ML+(acc/max)*pw, w=(val/max)*pw;
+        svg.appendChild(el('rect',{x:x0,y:cy-bh/2,width:w,height:bh,fill:CCOL[k],stroke:'#fff','stroke-width':1}));
+        if(w>52){
+          var t=tx(x0+w/2,cy+5,Math.round(val/10000)+'萬',{'font-size':13,fill:'#fff','text-anchor':'middle','font-weight':500});
+          svg.appendChild(t);
+        }
+        acc+=val;
+      });
+    });
+    setLegend(CATS.map(function(c,i){return [c,CCOL[i]];}));
+  }
+
+  function setLegend(items){
+    var lg=document.getElementById('legend'); lg.innerHTML='';
+    items.forEach(function(p){
+      var s=document.createElement('span');
+      s.innerHTML='<i style="background:'+p[1]+'"></i>'+p[0];
+      lg.appendChild(s);
+    });
+  }
+
+  var KPI={
+    rate:[['99.22%','114 學年度・原民會計畫執行率'],['100%','縣府委辦計畫・連續三年'],['專款專用','專帳處理・憑證留存備查']],
+    struct:[['48.2%','114 學年度・人事費占比'],['約 2.3%','資本門設備占比'],['逐年遞減','受補助總額調減之調整']]
+  };
+  var SUB={
+    rate:'兩項補助計畫三學年度執行率均達 97% 以上，縣府委辦計畫連續三年全數執行完畢。',
+    struct:'原民會計畫支出以人事費與授課鐘點為主，反映經費集中投入文化課程師資與教學實作。'
+  };
+  function setKpi(m){
+    var k=document.getElementById('kpi'); k.innerHTML='';
+    KPI[m].forEach(function(p){
+      var d=document.createElement('div');
+      d.innerHTML='<b>'+p[0]+'</b><span>'+p[1]+'</span>';
+      k.appendChild(d);
+    });
+    document.getElementById('sub').textContent=SUB[m];
+  }
+
+  var bR=document.getElementById('btnRate'), bS=document.getElementById('btnStruct'), cur='rate';
+  function mode(m){
+    cur=m;
+    if(m==='rate') drawRate(); else drawStruct();
+    setKpi(m);
+    bR.classList.toggle('active',m==='rate');
+    bS.classList.toggle('active',m==='struct');
+  }
+  bR.onclick=function(){mode('rate');};
+  bS.onclick=function(){mode('struct');};
+  var rt;
+  window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){mode(cur);},120);});
+  mode('rate');
+})();
+</script>
+</body>
+</html>
