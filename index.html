@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宜蘭縣立大同國民中學｜實驗教育計畫經費執行分析（112–114學年度）</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf7f2;
+    --card:#ffffff;
+    --tayal-red:#a63a2e;
+    --tayal-red-soft:#c96a5c;
+    --forest:#3e5c46;
+    --forest-soft:#7a9a82;
+    --ochre:#c98a2d;
+    --line:#e3dbd0;
+    --muted:#6f655c;
+    font-size:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.75;
+    font-size:1rem;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:0 28px 80px;}
+
+  /* ── 頁首 ── */
+  header{
+    background:var(--ink);
+    color:#f5efe6;
+    padding:56px 0 40px;
+  }
+  header .wrap{padding-bottom:0;}
+  .school{
+    font-size:1.15rem;
+    letter-spacing:.35em;
+    color:var(--ochre);
+    margin-bottom:14px;
+  }
+  h1{
+    font-size:2.5rem;
+    font-weight:900;
+    line-height:1.35;
+    letter-spacing:.05em;
+  }
+  .sub{
+    margin-top:16px;
+    font-size:1.2rem;
+    color:#d8cfc2;
+  }
+  .plans-tag{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px;}
+  .plans-tag span{
+    display:inline-block;padding:8px 20px;border-radius:999px;
+    font-size:1.05rem;font-weight:700;letter-spacing:.05em;
+  }
+  .tag-red{background:var(--tayal-red);color:#fff;}
+  .tag-green{background:var(--forest);color:#fff;}
+
+  /* 泰雅菱形紋分隔帶 */
+  .weave{display:block;width:100%;height:26px;}
+
+  /* ── 區段 ── */
+  section{margin-top:64px;}
+  h2{
+    font-size:1.85rem;font-weight:900;letter-spacing:.08em;
+    display:flex;align-items:center;gap:16px;margin-bottom:10px;
+  }
+  h2::before{
+    content:"";width:14px;height:14px;background:var(--tayal-red);
+    transform:rotate(45deg);flex:none;
+  }
+  .sec-note{font-size:1.05rem;color:var(--muted);margin-bottom:28px;}
+  h3{font-size:1.35rem;font-weight:800;margin-bottom:6px;letter-spacing:.04em;}
+
+  /* ── 摘要卡片 ── */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:26px 26px 22px;box-shadow:0 2px 10px rgba(43,36,32,.05);
+    border-top:6px solid var(--ochre);
+  }
+  .card.red{border-top-color:var(--tayal-red);}
+  .card.green{border-top-color:var(--forest);}
+  .card .label{font-size:1.02rem;color:var(--muted);font-weight:700;letter-spacing:.05em;}
+  .card .num{font-size:2.3rem;font-weight:900;letter-spacing:.02em;margin-top:6px;line-height:1.2;}
+  .card .unit{font-size:1.05rem;font-weight:700;color:var(--muted);margin-left:4px;}
+  .card .foot{font-size:.98rem;color:var(--muted);margin-top:8px;}
+  .num.red{color:var(--tayal-red);} .num.green{color:var(--forest);}
+
+  /* ── 圖表卡 ── */
+  .chart-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:30px;box-shadow:0 2px 10px rgba(43,36,32,.05);margin-top:24px;
+  }
+  .chart-card .desc{font-size:1.02rem;color:var(--muted);margin:2px 0 20px;}
+  .chart-box{position:relative;width:100%;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
+
+  /* ── 重點框 ── */
+  .callout{
+    background:#f3ede3;border-left:6px solid var(--ochre);
+    border-radius:0 12px 12px 0;padding:20px 26px;margin-top:26px;font-size:1.08rem;
+  }
+  .callout strong{color:var(--tayal-red);}
+
+  /* ── 表格 ── */
+  table{width:100%;border-collapse:collapse;background:var(--card);font-size:1.02rem;}
+  thead th{
+    background:var(--ink);color:#f5efe6;padding:12px 14px;text-align:center;
+    font-weight:800;letter-spacing:.05em;white-space:nowrap;
+  }
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums;}
+  tbody td:first-child{text-align:left;font-weight:600;}
+  tbody tr:nth-child(even){background:#fbf8f3;}
+  tfoot td{padding:13px 14px;font-weight:900;font-size:1.08rem;background:#f0e9dd;text-align:right;border-top:2px solid var(--ink);}
+  tfoot td:first-child{text-align:left;}
+  .diff{color:var(--tayal-red);font-weight:800;}
+  .zero{color:#b6ac9f;}
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:18px;}
+  .rate-pill{
+    display:inline-block;padding:2px 14px;border-radius:999px;font-weight:800;font-size:.98rem;
+    background:#e6efe8;color:var(--forest);
+  }
+  .rate-pill.warn{background:#f7e6e2;color:var(--tayal-red);}
+
+  footer{
+    margin-top:80px;padding:30px 0 0;border-top:2px solid var(--line);
+    font-size:.98rem;color:var(--muted);
+  }
+  @media print{
+    header{background:var(--ink)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .chart-card,.card{box-shadow:none;}
+    section{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="school">宜蘭縣立大同國民中學</div>
+    <h1>實驗教育計畫<br>經費使用與執行分析對照</h1>
+    <div class="sub">112－114 學年度｜評鑑委員審閱版</div>
+    <div class="plans-tag">
+      <span class="tag-red">原民會補助｜學校型態原住民族實驗教育計畫（實驗期）</span>
+      <span class="tag-green">縣府委辦｜學校型態實驗教育學校推動實驗教育計畫</span>
+    </div>
+  </div>
+</header>
+<svg class="weave" viewBox="0 0 1200 26" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect width="1200" height="26" fill="#2b2420"/>
+  <g fill="#a63a2e"><path d="M0 13 L13 0 L26 13 L13 26 Z" id="d"/></g>
+  <g fill="#a63a2e">
+    <use href="#d" x="0"/><use href="#d" x="52"/><use href="#d" x="104"/><use href="#d" x="156"/><use href="#d" x="208"/><use href="#d" x="260"/><use href="#d" x="312"/><use href="#d" x="364"/><use href="#d" x="416"/><use href="#d" x="468"/><use href="#d" x="520"/><use href="#d" x="572"/><use href="#d" x="624"/><use href="#d" x="676"/><use href="#d" x="728"/><use href="#d" x="780"/><use href="#d" x="832"/><use href="#d" x="884"/><use href="#d" x="936"/><use href="#d" x="988"/><use href="#d" x="1040"/><use href="#d" x="1092"/><use href="#d" x="1144"/>
+  </g>
+  <g fill="#c98a2d">
+    <use href="#d" x="26"/><use href="#d" x="78"/><use href="#d" x="130"/><use href="#d" x="182"/><use href="#d" x="234"/><use href="#d" x="286"/><use href="#d" x="338"/><use href="#d" x="390"/><use href="#d" x="442"/><use href="#d" x="494"/><use href="#d" x="546"/><use href="#d" x="598"/><use href="#d" x="650"/><use href="#d" x="702"/><use href="#d" x="754"/><use href="#d" x="806"/><use href="#d" x="858"/><use href="#d" x="910"/><use href="#d" x="962"/><use href="#d" x="1014"/><use href="#d" x="1066"/><use href="#d" x="1118"/><use href="#d" x="1170"/>
+  </g>
+</svg>
+
+<div class="wrap">
+
+<!-- ═══ 一、全期總覽 ═══ -->
+<section>
+  <h2>一、三學年度經費執行總覽</h2>
+  <div class="sec-note">兩項計畫三學年度合計撥付 <b>520 萬元</b>，實支 <b>5,138,586 元</b>，整體執行率 <b>98.8%</b>。</div>
+  <div class="cards">
+    <div class="card red">
+      <div class="label">原民會計畫｜三年合計撥付</div>
+      <div class="num red">4,300,000<span class="unit">元</span></div>
+      <div class="foot">112・113 各 150 萬｜114 為 130 萬</div>
+    </div>
+    <div class="card red">
+      <div class="label">原民會計畫｜三年實支・執行率</div>
+      <div class="num red">4,238,586<span class="unit">元</span></div>
+      <div class="foot">平均執行率 <b>98.6%</b>，逐年提升</div>
+    </div>
+    <div class="card green">
+      <div class="label">縣府委辦計畫｜三年合計撥付</div>
+      <div class="num green">900,000<span class="unit">元</span></div>
+      <div class="foot">每學年 30 萬元</div>
+    </div>
+    <div class="card green">
+      <div class="label">縣府委辦計畫｜三年實支・執行率</div>
+      <div class="num green">900,000<span class="unit">元</span></div>
+      <div class="foot">三學年度均 <b>100%</b> 全數執行</div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>各學年度撥付數與實支數對照</h3>
+    <div class="desc">兩計畫分列，左側紅色系為原民會計畫、右側綠色系為縣府委辦計畫（單位：元）。</div>
+    <div class="chart-box" style="height:420px"><canvas id="chartOverview"></canvas></div>
+  </div>
+</section>
+
+<!-- ═══ 二、執行率 ═══ -->
+<section>
+  <h2>二、經費執行率趨勢</h2>
+  <div class="sec-note">原民會計畫執行率由 112 學年度 97.5% 穩定提升至 114 學年度 99.2%；縣府委辦計畫三年皆維持 100%。</div>
+  <div class="chart-card">
+    <div class="chart-box" style="height:380px"><canvas id="chartRate"></canvas></div>
+  </div>
+  <div class="callout">
+    <strong>執行率持續優化：</strong>原民會計畫三學年度結餘款依序為 37,806 元 → 13,527 元 → 10,081 元，結餘逐年下降、執行精準度逐年提高；主要結餘均來自「外聘授課鐘點費」，係實際授課節數依師資到課情形核實支付所致，其餘各項目均依核定額度覈實執行。
+  </div>
+</section>
+
+<!-- ═══ 三、原民會計畫 ═══ -->
+<section>
+  <h2>三、原民會計畫｜經費使用結構分析</h2>
+  <div class="sec-note">依支出性質歸併為七大類，呈現三學年度資源配置之延續與調整（單位：元，均為實支數）。</div>
+  <div class="chart-card">
+    <h3>三學年度支出結構對照</h3>
+    <div class="chart-box" style="height:460px"><canvas id="chartCipStructure"></canvas></div>
+  </div>
+  <div class="grid-2">
+    <div class="chart-card">
+      <h3>經常門・資本門配置</h3>
+      <div class="desc">經費以經常門（課程與人力）為主體，資本門僅佔 1–4%。</div>
+      <div class="chart-box" style="height:340px"><canvas id="chartGate"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>114 學年度實支比例</h3>
+      <div class="desc">人事與課程教學合計約佔七成，經費確實投入教學現場。</div>
+      <div class="chart-box" style="height:340px"><canvas id="chartPie114"></canvas></div>
+    </div>
+  </div>
+  <div class="callout">
+    <strong>資源配置重點：</strong>三學年度中「專任人力＋授課講座鐘點」穩定佔實支七成左右，確保泰雅文化課程之族語師資、耆老與外聘專家授課量能；「教材教具與材料費」三年合計 75 萬元，支應織布、狩獵、山林智慧等實作課程；資本門逐年購置教學設備（口袋雲台相機、投影機、數位相機、智慧顯示器），強化文化課程紀錄與展示。
+  </div>
+</section>
+
+<!-- ═══ 四、縣府委辦計畫 ═══ -->
+<section>
+  <h2>四、縣府委辦計畫｜經費使用結構分析</h2>
+  <div class="sec-note">每學年 30 萬元，聚焦教師增能、課程發展與跨校交流參訪，三學年度均 100% 執行（單位：元）。</div>
+  <div class="chart-card">
+    <h3>三學年度支出結構對照</h3>
+    <div class="chart-box" style="height:420px"><canvas id="chartCntStructure"></canvas></div>
+  </div>
+  <div class="callout">
+    <strong>使用重點：</strong>本計畫以「交通・住宿・差旅」為最大宗（三年合計約 39 萬元），支應師生跨校觀摩、部落踏查與實驗教育交流；講座鐘點費由 112 學年度 43,682 元提升至 114 學年度 72,000 元，顯示外聘專家投入教師專業成長之比重逐年提高；並逐年購置教學設備（LED 行動投影機、無線擴音機、筆記型電腦）支援課程實施。
+  </div>
+</section>
+
+<!-- ═══ 五、明細對照表 ═══ -->
+<section>
+  <h2>五、各學年度經費結報明細</h2>
+  <div class="sec-note">差額欄以紅字標示，其餘項目均依核定額度全數執行（單位：元）。</div>
+
+  <h3 style="margin-top:20px;color:var(--tayal-red)">（一）原民會補助｜學校型態原住民族實驗教育計畫（實驗期）</h3>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th style="text-align:left">學年度／計畫期程</th><th>撥付數 (A)</th><th>實支數 (B)</th><th>差額 (A−B)</th><th>執行率</th><th style="text-align:left">主要差額說明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>112 學年度（112.8.1–113.7.31）</td><td>1,500,000</td><td>1,462,194</td><td class="diff">37,806</td><td style="text-align:center"><span class="rate-pill warn">97.5%</span></td><td style="text-align:left">外聘授課鐘點費 37,606、差旅費 200</td></tr>
+        <tr><td>113 學年度（113.8.1–114.7.31）</td><td>1,500,000</td><td>1,486,473</td><td class="diff">13,527</td><td style="text-align:center"><span class="rate-pill">99.1%</span></td><td style="text-align:left">外聘授課鐘點費(800) 12,400、膳費 1,120、薪資 7</td></tr>
+        <tr><td>114 學年度（114.8.1–115.7.31）</td><td>1,300,000</td><td>1,289,919</td><td class="diff">10,081</td><td style="text-align:center"><span class="rate-pill">99.2%</span></td><td style="text-align:left">外聘授課鐘點費(800) 10,080、資本門 1</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td>三學年度合計</td><td>4,300,000</td><td>4,238,586</td><td class="diff">61,414</td><td style="text-align:center">98.6%</td><td></td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h3 style="margin-top:40px;color:var(--forest)">（二）縣府委辦｜學校型態實驗教育學校推動實驗教育計畫</h3>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th style="text-align:left">學年度／計畫期程</th><th>核定金額</th><th>實支總額</th><th>結餘款</th><th>執行率</th><th style="text-align:left">主要支用項目</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>112 學年度（112.8.1–113.7.31）</td><td>300,000</td><td>300,000</td><td class="zero">0</td><td style="text-align:center"><span class="rate-pill">100%</span></td><td style="text-align:left">交通 81,000、住宿 56,000、鐘點講座 43,682、LED 投影機 28,900</td></tr>
+        <tr><td>113 學年度（113.8.1–114.7.31）</td><td>300,000</td><td>300,000</td><td class="zero">0</td><td style="text-align:center"><span class="rate-pill">100%</span></td><td style="text-align:left">交通 102,000、講座鐘點 44,000、膳費 40,050、住宿 38,000</td></tr>
+        <tr><td>114 學年度（114.8.1–115.7.31）</td><td>300,000</td><td>300,000</td><td class="zero">0</td><td style="text-align:center"><span class="rate-pill">100%</span></td><td style="text-align:left">交通 76,500、講座鐘點 72,000、材料 55,000、筆電 24,999</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td>三學年度合計</td><td>900,000</td><td>900,000</td><td class="zero">0</td><td style="text-align:center">100%</td><td></td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h3 style="margin-top:40px">（三）原民會計畫各項目實支明細（三學年度對照）</h3>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th style="text-align:left">核定補助項目</th><th>112 實支</th><th>113 實支</th><th>114 實支</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>約僱人員薪資</td><td>501,592</td><td>519,001</td><td>526,392</td></tr>
+        <tr><td>約僱人員保費（含二代健保）</td><td>95,976</td><td>96,800</td><td>94,836</td></tr>
+        <tr><td>行政工作費</td><td>65,470</td><td>72,565</td><td>58,320</td></tr>
+        <tr><td>外聘授課鐘點費</td><td>298,050</td><td>276,400</td><td>242,520</td></tr>
+        <tr><td>外聘講座鐘點費</td><td>—</td><td>60,000</td><td>24,000</td></tr>
+        <tr><td>出席費</td><td>10,000</td><td>20,000</td><td>20,000</td></tr>
+        <tr><td>教材教具費</td><td>150,000</td><td>120,000</td><td>100,000</td></tr>
+        <tr><td>材料費</td><td>150,000</td><td>130,000</td><td>100,000</td></tr>
+        <tr><td>印刷費</td><td>20,000</td><td>12,000</td><td>10,000</td></tr>
+        <tr><td>交通費</td><td>105,000</td><td>100,000</td><td>68,000</td></tr>
+        <tr><td>膳費</td><td>20,000</td><td>12,680</td><td>10,000</td></tr>
+        <tr><td>差旅費</td><td>4,800</td><td>—</td><td>—</td></tr>
+        <tr><td>雜支</td><td>4,506</td><td>7,027</td><td>5,852</td></tr>
+        <tr><td>資本門設備</td><td>36,800</td><td>60,000</td><td>29,999</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td>實支合計</td><td>1,462,194</td><td>1,486,473</td><td>1,289,919</td></tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="sec-note" style="margin-top:12px">註：113 學年度保費含二代健保 7,360 元；外聘授課鐘點費為 650 元級距與 800 元級距合計。資本門設備依年度分別為：112 口袋雲台相機、LCD 投影機；113 數位相機；114 可移動式智慧液晶顯示器。</div>
+</section>
+
+<footer>
+  <div class="wrap" style="padding:0">
+    資料來源：112–114 學年度原住民族委員會補助經費結報表、宜蘭縣政府委辦經費收支結算表（宜蘭縣立大同國民中學）。<br>
+    本頁為評鑑審閱用彙整分析，各項金額以正式結報表為準。
+  </div>
+</footer>
+
+</div>
+
+<script>
+Chart.defaults.font.family = '"Noto Sans TC","Microsoft JhengHei",sans-serif';
+Chart.defaults.font.size = 16;
+Chart.defaults.color = '#2b2420';
+
+const RED='#a63a2e', RED_S='#d9a49b', GREEN='#3e5c46', GREEN_S='#a9c2af',
+      OCHRE='#c98a2d', INK='#2b2420';
+const fmt = v => v.toLocaleString('zh-TW');
+
+/* 一、撥付 vs 實支 */
+new Chart(document.getElementById('chartOverview'),{
+  type:'bar',
+  data:{
+    labels:['112 學年度','113 學年度','114 學年度'],
+    datasets:[
+      {label:'原民會｜撥付數',data:[1500000,1500000,1300000],backgroundColor:RED_S,borderColor:RED,borderWidth:1.5},
+      {label:'原民會｜實支數',data:[1462194,1486473,1289919],backgroundColor:RED,borderColor:RED,borderWidth:1.5},
+      {label:'縣府委辦｜撥付數',data:[300000,300000,300000],backgroundColor:GREEN_S,borderColor:GREEN,borderWidth:1.5},
+      {label:'縣府委辦｜實支數',data:[300000,300000,300000],backgroundColor:GREEN,borderColor:GREEN,borderWidth:1.5}
+    ]
+  },
+  options:{
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{padding:20,font:{size:16,weight:'700'}}},
+      tooltip:{callbacks:{label:c=>` ${c.dataset.label}：${fmt(c.raw)} 元`}}
+    },
+    scales:{
+      y:{ticks:{callback:v=>(v/10000)+' 萬'},grid:{color:'#eee5d8'}},
+      x:{grid:{display:false},ticks:{font:{size:17,weight:'800'}}}
+    }
+  }
+});
+
+/* 二、執行率 */
+new Chart(document.getElementById('chartRate'),{
+  type:'line',
+  data:{
+    labels:['112 學年度','113 學年度','114 學年度'],
+    datasets:[
+      {label:'原民會計畫執行率',data:[97.48,99.10,99.22],borderColor:RED,backgroundColor:RED,
+       borderWidth:4,pointRadius:8,pointHoverRadius:10,tension:.25,
+       datalabels:false},
+      {label:'縣府委辦計畫執行率',data:[100,100,100],borderColor:GREEN,backgroundColor:GREEN,
+       borderWidth:4,pointRadius:8,pointHoverRadius:10,tension:0,borderDash:[8,6]}
+    ]
+  },
+  options:{
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{padding:20,font:{size:16,weight:'700'}}},
+      tooltip:{callbacks:{label:c=>` ${c.dataset.label}：${c.raw}%`}}
+    },
+    scales:{
+      y:{min:95,max:101,ticks:{callback:v=>v+'%'},grid:{color:'#eee5d8'}},
+      x:{grid:{display:false},ticks:{font:{size:17,weight:'800'}}}
+    }
+  }
+});
+
+/* 三、原民會結構（堆疊橫條） */
+const cipCats=['人事費（約僱薪資・保費）','行政與出席費','授課與講座鐘點','教材教具與材料','交通差旅與膳費','印刷與雜支','資本門設備'];
+const cipColors=['#7d3b32','#a63a2e','#c96a5c','#c98a2d','#3e5c46','#7a9a82','#5a5148'];
+const cip112=[597568,75470,298050,300000,129800,24506,36800];
+const cip113=[615801,92565,336400,250000,112680,19027,60000];
+const cip114=[621228,78320,266520,200000,78000,15852,29999];
+new Chart(document.getElementById('chartCipStructure'),{
+  type:'bar',
+  data:{
+    labels:['112 學年度','113 學年度','114 學年度'],
+    datasets:cipCats.map((c,i)=>({
+      label:c,
+      data:[cip112[i],cip113[i],cip114[i]],
+      backgroundColor:cipColors[i]
+    }))
+  },
+  options:{
+    indexAxis:'y',
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{padding:16,font:{size:15,weight:'600'},boxWidth:18}},
+      tooltip:{callbacks:{label:c=>` ${c.dataset.label}：${fmt(c.raw)} 元（${(c.raw/[1462194,1486473,1289919][c.dataIndex]*100).toFixed(1)}%）`}}
+    },
+    scales:{
+      x:{stacked:true,ticks:{callback:v=>(v/10000)+' 萬'},grid:{color:'#eee5d8'}},
+      y:{stacked:true,grid:{display:false},ticks:{font:{size:17,weight:'800'}}}
+    }
+  }
+});
+
+/* 三、經常門資本門 */
+new Chart(document.getElementById('chartGate'),{
+  type:'bar',
+  data:{
+    labels:['112 學年度','113 學年度','114 學年度'],
+    datasets:[
+      {label:'經常門實支',data:[1425394,1426473,1259920],backgroundColor:RED},
+      {label:'資本門實支',data:[36800,60000,29999],backgroundColor:OCHRE}
+    ]
+  },
+  options:{
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{padding:16,font:{size:15,weight:'700'}}},
+      tooltip:{callbacks:{label:c=>` ${c.dataset.label}：${fmt(c.raw)} 元`}}
+    },
+    scales:{
+      x:{stacked:true,grid:{display:false},ticks:{font:{size:16,weight:'800'}}},
+      y:{stacked:true,ticks:{callback:v=>(v/10000)+' 萬'},grid:{color:'#eee5d8'}}
+    }
+  }
+});
+
+/* 三、114 圓餅 */
+new Chart(document.getElementById('chartPie114'),{
+  type:'doughnut',
+  data:{
+    labels:cipCats,
+    datasets:[{data:cip114,backgroundColor:cipColors,borderColor:'#fff',borderWidth:2}]
+  },
+  options:{
+    maintainAspectRatio:false,
+    cutout:'52%',
+    plugins:{
+      legend:{position:'right',labels:{padding:12,font:{size:14,weight:'600'},boxWidth:16}},
+      tooltip:{callbacks:{label:c=>` ${c.label}：${fmt(c.raw)} 元（${(c.raw/1289919*100).toFixed(1)}%）`}}
+    }
+  }
+});
+
+/* 四、縣府結構 */
+const cntCats=['鐘點與講座費','教材與材料費','交通・住宿・差旅','膳費','印刷與雜支','教學設備'];
+const cntColors=['#3e5c46','#7a9a82','#a63a2e','#c98a2d','#b6ac9f','#5a5148'];
+const cnt112=[43682,43100,137000,34200,13118,28900];
+const cnt113=[44000,42100,140000,40050,7850,26000];
+const cnt114=[72000,55000,116500,24000,7501,24999];
+new Chart(document.getElementById('chartCntStructure'),{
+  type:'bar',
+  data:{
+    labels:['112 學年度','113 學年度','114 學年度'],
+    datasets:cntCats.map((c,i)=>({
+      label:c,
+      data:[cnt112[i],cnt113[i],cnt114[i]],
+      backgroundColor:cntColors[i]
+    }))
+  },
+  options:{
+    indexAxis:'y',
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{padding:16,font:{size:15,weight:'600'},boxWidth:18}},
+      tooltip:{callbacks:{label:c=>` ${c.dataset.label}：${fmt(c.raw)} 元（${(c.raw/300000*100).toFixed(1)}%）`}}
+    },
+    scales:{
+      x:{stacked:true,ticks:{callback:v=>(v/10000)+' 萬'},grid:{color:'#eee5d8'}},
+      y:{stacked:true,grid:{display:false},ticks:{font:{size:17,weight:'800'}}}
+    }
+  }
+});
+</script>
+</body>
+</html>
